@@ -1,0 +1,88 @@
+name: Build and test
+
+on:
+  push:
+    branches: [stable, master]
+  pull_request:
+    branches: [stable, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: c-hive/gha-yarn-cache@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint
+      - run: yarn checkTs
+      - run: yarn build
+
+  jest:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: c-hive/gha-yarn-cache@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn test --coverage
+      - name: 'Upload coverage report'
+        uses: actions/upload-artifact@v2
+        with:
+          name: jest-coverage
+          path: coverage
+          retention-days: 5
+
+  cypress:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: c-hive/gha-yarn-cache@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - run: yarn install --frozen-lockfile
+      - run: docker-compose pull
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+      - run: REACT_APP_BACKEND=oasismonitor yarn start &
+      - run: docker-compose up --build -d
+      - uses: emilioschepis/wait-for-endpoint@v1.0.2
+        with:
+          url: 'http://localhost:3000/'
+          expected-status: 200
+          timeout: 2000
+          interval: 500
+      - run: yarn cypress:run
+      - name: 'Upload coverage report'
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-coverage
+          path: cypress-coverage
+          retention-days: 5
+
+  upload-coverage:
+    needs: [cypress, jest]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download coverage reports
+        uses: actions/download-artifact@v2
+      - uses: codecov/codecov-action@v2
+        with:
+          files: ./jest-coverage/coverage-final.json
+          flags: jest
+      - uses: codecov/codecov-action@v2
+        with:
+          files: ./cypress-coverage/coverage-final.json
+          flags: cypress

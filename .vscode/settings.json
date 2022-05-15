@@ -1,0 +1,45 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "jest.showCoverageOnLoad": true,
+  "typescriptHero.imports.insertSemicolons": false,
+  "files.exclude": {
+    "**/__snapshots__/": true,
+    ".nyc_output/": true,
+    "cypress-coverage/": true,
+    ".parcel-cache/": true,
+    "build/": true,
+    "build-ext/": true,
+    "src/vendors/explorer/apis": true,
+    "src/vendors/explorer/models": true,
+    "src/vendors/explorer/.openapi-generator": true,
+    "src/vendors/explorer/.openapi-generator-ignore": true,
+    "src/vendors/explorer/runtime.ts": true,
+    "src/vendors/explorer/index.ts": true,
+    "src/vendors/oasisscan/apis": true,
+    "src/vendors/oasisscan/models": true,
+    "src/vendors/oasisscan/.openapi-generator": true,
+    "src/vendors/oasisscan/.openapi-generator-ignore": true,
+    "src/vendors/oasisscan/runtime.ts": true,
+    "src/vendors/oasisscan/index.ts": true
+  },
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.0/schema.json": "swagger3.yml",
+    "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v2.0/schema.json": "swagger.yml"
+  }
+}
